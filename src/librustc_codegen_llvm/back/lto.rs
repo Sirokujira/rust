@@ -279,11 +279,12 @@ fn fat_lto(cgcx: &CodegenContext,
         // and we want to move everything to the same LLVM context. Currently the
         // way we know of to do that is to serialize them to a string and them parse
         // them later. Not great but hey, that's why it's "fat" LTO, right?
-        for module in modules {
+        serialized_modules.extend(modules.into_iter().map(|module| {
             let buffer = ModuleBuffer::new(module.module_llvm.llmod());
             let llmod_id = CString::new(&module.name[..]).unwrap();
-            serialized_modules.push((SerializedModule::Local(buffer), llmod_id));
-        }
+
+            (SerializedModule::Local(buffer), llmod_id)
+        }));
 
         // For all serialized bitcode files we parse them and link them in as we did
         // above, this is all mostly handled in C++. Like above, though, we don't
@@ -414,7 +415,7 @@ fn thin_lto(cgcx: &CodegenContext,
         //        into the global index. It turns out that this loop is by far
         //        the most expensive portion of this small bit of global
         //        analysis!
-        for (i, module) in modules.iter().enumerate() {
+        for (i, module) in modules.into_iter().enumerate() {
             info!("local module: {} - {}", i, module.name);
             let name = CString::new(module.name.clone()).unwrap();
             let buffer = ThinBuffer::new(module.module_llvm.llmod());
