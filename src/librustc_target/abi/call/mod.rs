@@ -32,6 +32,7 @@ mod x86;
 mod x86_64;
 mod x86_win64;
 mod wasm32;
+mod rx600;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum PassMode {
@@ -527,6 +528,7 @@ impl<'a, Ty> FnType<'a, Ty> {
             "hexagon" => hexagon::compute_abi_info(self),
             "riscv32" => riscv::compute_abi_info(self, 32),
             "riscv64" => riscv::compute_abi_info(self, 64),
+            "rx600" => rx600::compute_abi_info(self),
             a => return Err(format!("unrecognized arch \"{}\" in target specification", a))
         }
 
