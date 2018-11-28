@@ -97,7 +97,7 @@ pub fn initialize_available_targets() {
                  LLVMInitializeRISCVTargetMC,
                  LLVMInitializeRISCVAsmPrinter,
                  LLVMInitializeRISCVAsmParser);
-    init_target!(llvm_component = "rx600", // ’Ç‰Á•”•ª
+    init_target!(llvm_component = "rx600", // è¿½åŠ éƒ¨åˆ†
                  LLVMInitializeRX600TargetInfo,
                  LLVMInitializeRX600Target,
                  LLVMInitializeRX600TargetMC,
