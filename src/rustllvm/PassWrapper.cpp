@@ -176,9 +176,9 @@ void LLVMRustPassManagerBuilderPopulateThinLTOPassManager(
 #endif
 
 #ifdef LLVM_COMPONENT_RX600                         // <- 追加部分
-#define SUBTARGET_HEXAGON SUBTARGET(RX600)
+#define SUBTARGET_RX600 SUBTARGET(RX600)
 #else
-#define SUBTARGET_HEXAGON
+#define SUBTARGET_RX600
 #endif
 
 
