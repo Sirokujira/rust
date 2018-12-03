@@ -243,7 +243,6 @@ fn check_statement(
         | StatementKind::StorageDead(_)
         | StatementKind::Retag { .. }
         | StatementKind::EscapeToRaw { .. }
-        | StatementKind::EndRegion(_)
         | StatementKind::AscribeUserType(..)
         | StatementKind::Nop => Ok(()),
     }
@@ -365,10 +364,8 @@ fn check_terminator(
             cleanup: _,
         } => check_operand(tcx, mir, cond, span),
 
-        | TerminatorKind::FalseUnwind { .. } => span_bug!(
-            terminator.source_info.span,
-            "min_const_fn encountered `{:#?}`",
-            terminator
-        ),
+        TerminatorKind::FalseUnwind { .. } => {
+            Err((span, "loops are not allowed in const fn".into()))
+        },
     }
 }

@@ -802,7 +802,7 @@ macro_rules! options {
         pub const parse_opt_uint: Option<&'static str> =
             Some("a number");
         pub const parse_panic_strategy: Option<&'static str> =
-            Some("either `panic` or `abort`");
+            Some("either `unwind` or `abort`");
         pub const parse_relro_level: Option<&'static str> =
             Some("one of: `full`, `partial`, or `off`");
         pub const parse_sanitizer: Option<&'static str> =
@@ -1149,8 +1149,6 @@ options! {DebuggingOptions, DebuggingSetter, basic_debugging_options,
         "when debug-printing compiler state, do not include spans"), // o/w tests have closure@path
     identify_regions: bool = (false, parse_bool, [UNTRACKED],
         "make unnamed regions display as '# (where # is some non-ident unique id)"),
-    emit_end_regions: bool = (false, parse_bool, [UNTRACKED],
-        "emit EndRegion as part of MIR; enable transforms that solely process EndRegion"),
     borrowck: Option<String> = (None, parse_opt_string, [UNTRACKED],
         "select which borrowck is used (`ast`, `mir`, `migrate`, or `compare`)"),
     two_phase_borrows: bool = (false, parse_bool, [UNTRACKED],
@@ -1288,8 +1286,6 @@ options! {DebuggingOptions, DebuggingSetter, basic_debugging_options,
         "print some performance-related statistics"),
     hir_stats: bool = (false, parse_bool, [UNTRACKED],
         "print some statistics about AST and HIR"),
-    mir_stats: bool = (false, parse_bool, [UNTRACKED],
-        "print some statistics about MIR"),
     always_encode_mir: bool = (false, parse_bool, [TRACKED],
         "encode MIR of all functions into the crate metadata"),
     osx_rpath_install_name: bool = (false, parse_bool, [TRACKED],
