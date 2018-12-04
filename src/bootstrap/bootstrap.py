@@ -791,6 +791,7 @@ def bootstrap(help_triggered):
             print('      does not work you should run a normal build first')
             print('      before running a command like `sudo ./x.py install`')
 
+    build.use_vendored_sources = False
     if build.use_vendored_sources:
         if not os.path.exists('.cargo'):
             os.makedirs('.cargo')
@@ -815,7 +816,7 @@ def bootstrap(help_triggered):
     if 'dev' in data:
         build.set_dev_environment()
 
-    build.update_submodules()
+    # build.update_submodules()
 
     # Fetch/build the bootstrap
     build.build = args.build or build.build_triple()
