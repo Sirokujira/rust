@@ -75,6 +75,7 @@ mod l4re_base;
 mod fuchsia_base;
 mod redox_base;
 mod riscv_base;
+mod rx600_base; // 追加部分
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Hash,
          RustcEncodable, RustcDecodable)]
@@ -412,6 +413,8 @@ supported_targets! {
 
     ("riscv32imc-unknown-none-elf", riscv32imc_unknown_none_elf),
     ("riscv32imac-unknown-none-elf", riscv32imac_unknown_none_elf),
+
+    ("rx600-unknown-none-elf", rx600_unknown_none_elf), // <- 追加項目
 
     ("aarch64-unknown-none", aarch64_unknown_none),
 

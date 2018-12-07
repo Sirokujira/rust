@@ -102,6 +102,7 @@ fn main() {
 
     if major > 6 {
         optional_components.push("riscv");
+        optional_components.push("rx600"); // 追加部分
     }
 
     // FIXME: surely we don't need all these components, right? Stuff like mcjit
