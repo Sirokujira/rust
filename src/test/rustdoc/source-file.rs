@@ -8,11 +8,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-enum StackList<'a, T: 'a> {
-    Nil,
-    Cons(T, &'a Self)
-    //~^ ERROR cannot find type `Self` in this scope
-    //~| `Self` is only available in traits and impls
-}
+#![crate_name = "foo"]
 
-fn main() {}
+// @has source-files.js source-file.rs
+
+pub struct Foo;
