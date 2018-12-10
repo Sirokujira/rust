@@ -32,7 +32,7 @@ mod x86;
 mod x86_64;
 mod x86_win64;
 mod wasm32;
-mod rx600;	// ’Ç‰Á•”•ª
+mod rx600; // Add Part
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum PassMode {
