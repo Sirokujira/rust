@@ -25,7 +25,8 @@
     url = https://github.com/rust-lang-nursery/rls.git
 [submodule "src/libcompiler_builtins"]
     path = src/libcompiler_builtins
-    url = https://github.com/rust-lang-nursery/compiler-builtins.git
+    url = https://github.com/Sirokujira/compiler-builtins.git
+    branch = add_renesas_setting
 [submodule "src/tools/clippy"]
     path = src/tools/clippy
     url = https://github.com/rust-lang-nursery/rust-clippy.git
