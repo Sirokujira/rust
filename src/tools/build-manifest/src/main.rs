@@ -14,7 +14,7 @@ extern crate serde_derive;
 
 use std::collections::BTreeMap;
 use std::env;
-use std::fs::File;
+use std::fs;
 use std::io::{self, Read, Write};
 use std::path::{PathBuf, Path};
 use std::process::{Command, Stdio};
@@ -607,7 +607,7 @@ impl Builder {
 
         let filename = path.file_name().unwrap().to_str().unwrap();
         let sha256 = self.output.join(format!("{}.sha256", filename));
-        t!(t!(File::create(&sha256)).write_all(&sha.stdout));
+        t!(fs::write(&sha256, &sha.stdout));
 
         let stdout = String::from_utf8_lossy(&sha.stdout);
         stdout.split_whitespace().next().unwrap().to_string()
@@ -624,6 +624,7 @@ impl Builder {
         let mut cmd = Command::new("gpg");
         cmd.arg("--no-tty")
             .arg("--yes")
+            .arg("--batch")
             .arg("--passphrase-fd").arg("0")
             .arg("--personal-digest-preferences").arg("SHA512")
             .arg("--armor")
@@ -644,7 +645,7 @@ impl Builder {
 
     fn write(&self, contents: &str, channel_name: &str, suffix: &str) {
         let dst = self.output.join(format!("channel-rust-{}{}", channel_name, suffix));
-        t!(t!(File::create(&dst)).write_all(contents.as_bytes()));
+        t!(fs::write(&dst, contents));
         self.hash(&dst);
         self.sign(&dst);
     }

@@ -235,7 +235,7 @@ macro_rules! supported_targets {
         $(mod $module;)*
 
         /// List of supported targets
-        const TARGETS: &'static [&'static str] = &[$($triple),*];
+        const TARGETS: &[&str] = &[$($triple),*];
 
         fn load_specific(target: &str) -> TargetResult {
             match target {
@@ -401,6 +401,8 @@ supported_targets! {
     ("thumbv7em-none-eabi", thumbv7em_none_eabi),
     ("thumbv7em-none-eabihf", thumbv7em_none_eabihf),
     ("thumbv8m.base-none-eabi", thumbv8m_base_none_eabi),
+    ("thumbv8m.main-none-eabi", thumbv8m_main_none_eabi),
+    ("thumbv8m.main-none-eabihf", thumbv8m_main_none_eabihf),
 
     ("msp430-none-elf", msp430_none_elf),
 
@@ -415,7 +417,7 @@ supported_targets! {
     ("riscv32imc-unknown-none-elf", riscv32imc_unknown_none_elf),
     ("riscv32imac-unknown-none-elf", riscv32imac_unknown_none_elf),
 
-    ("rx600-unknown-none-elf", rx600_unknown_none_elf), // <- 追加項目
+    ("rx600-unknown-none-elf", rx600_unknown_none_elf), // Add Part
 
     ("aarch64-unknown-none", aarch64_unknown_none),
 
@@ -606,7 +608,7 @@ pub struct TargetOptions {
     /// `eh_unwind_resume` lang item.
     pub custom_unwind_resume: bool,
 
-    /// Flag indicating whether ELF TLS (e.g. #[thread_local]) is available for
+    /// Flag indicating whether ELF TLS (e.g., #[thread_local]) is available for
     /// this target.
     pub has_elf_tls: bool,
     // This is mainly for easy compatibility with emscripten.

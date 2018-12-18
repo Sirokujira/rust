@@ -287,7 +287,7 @@
 #![feature(rustc_attrs)]
 #![feature(rustc_const_unstable)]
 #![feature(std_internals)]
-#![cfg_attr(not(stage0), feature(stdsimd))]
+#![feature(stdsimd)]
 #![feature(shrink_to)]
 #![feature(slice_concat_ext)]
 #![feature(slice_internals)]
@@ -312,6 +312,8 @@
 #![feature(non_exhaustive)]
 #![feature(alloc_layout_extra)]
 #![feature(maybe_uninit)]
+#![cfg_attr(target_env = "sgx", feature(global_asm, range_contains, slice_index_methods,
+                                        decl_macro, coerce_unsized))]
 
 #![default_lib_allocator]
 
@@ -353,6 +355,12 @@ extern crate unwind;
 // _not_ the globals used by "real" std. So this import, defined only during
 // testing gives test-std access to real-std lang items and globals. See #2912
 #[cfg(test)] extern crate std as realstd;
+
+#[cfg(target_env = "sgx")]
+#[macro_use]
+#[allow(unused_imports)] // FIXME: without `#[macro_use]`, get error: “cannot
+                         // determine resolution for the macro `usercalls_asm`”
+extern crate fortanix_sgx_abi;
 
 // The standard macros that are not built-in to the compiler.
 #[macro_use]
@@ -506,18 +514,17 @@ pub mod rt;
 #[path = "../stdsimd/stdsimd/mod.rs"]
 #[allow(missing_debug_implementations, missing_docs, dead_code)]
 #[unstable(feature = "stdsimd", issue = "48556")]
-#[cfg(all(not(stage0), not(test)))]
+#[cfg(not(test))]
 mod stdsimd;
 
 // A "fake" module needed by the `stdsimd` module to compile, not actually
 // exported though.
-#[cfg(not(stage0))]
 mod coresimd {
     pub use core::arch;
 }
 
 #[stable(feature = "simd_arch", since = "1.27.0")]
-#[cfg(all(not(stage0), not(test)))]
+#[cfg(not(test))]
 pub use stdsimd::arch;
 
 // Include a number of private modules that exist solely to provide

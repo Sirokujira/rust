@@ -64,11 +64,11 @@ impl FromInternal<(TokenStream, &'_ ParseSess, &'_ mut Vec<Self>)>
 
         let (tree, joint) = stream.as_tree();
         let (span, token) = match tree {
-            tokenstream::TokenTree::Delimited(span, delimed) => {
-                let delimiter = Delimiter::from_internal(delimed.delim);
+            tokenstream::TokenTree::Delimited(span, delim, tts) => {
+                let delimiter = Delimiter::from_internal(delim);
                 return TokenTree::Group(Group {
                     delimiter,
-                    stream: delimed.tts.into(),
+                    stream: tts.into(),
                     span,
                 });
             }
@@ -232,10 +232,8 @@ impl ToInternal<TokenStream> for TokenTree<Group, Punct, Ident, Literal> {
             }) => {
                 return tokenstream::TokenTree::Delimited(
                     span,
-                    tokenstream::Delimited {
-                        delim: delimiter.to_internal(),
-                        tts: stream.into(),
-                    },
+                    delimiter.to_internal(),
+                    stream.into(),
                 )
                 .into();
             }
@@ -402,7 +400,7 @@ impl server::TokenStream for Rustc<'_> {
     }
     fn from_str(&mut self, src: &str) -> Self::TokenStream {
         parse::parse_stream_from_source_str(
-            FileName::ProcMacroSourceCode,
+            FileName::proc_macro_source_code(src.clone()),
             src.to_string(),
             self.sess,
             Some(self.call_site),

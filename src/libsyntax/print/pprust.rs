@@ -724,7 +724,7 @@ pub trait PrintState<'a> {
             if i > 0 {
                 self.writer().word("::")?
             }
-            if segment.ident.name != keywords::CrateRoot.name() &&
+            if segment.ident.name != keywords::PathRoot.name() &&
                segment.ident.name != keywords::DollarCrate.name()
             {
                 self.writer().word(segment.ident.as_str().get())?;
@@ -815,12 +815,12 @@ pub trait PrintState<'a> {
                     _ => Ok(())
                 }
             }
-            TokenTree::Delimited(_, ref delimed) => {
-                self.writer().word(token_to_string(&delimed.open_token()))?;
+            TokenTree::Delimited(_, delim, tts) => {
+                self.writer().word(token_to_string(&token::OpenDelim(delim)))?;
                 self.writer().space()?;
-                self.print_tts(delimed.stream())?;
+                self.print_tts(tts.stream())?;
                 self.writer().space()?;
-                self.writer().word(token_to_string(&delimed.close_token()))
+                self.writer().word(token_to_string(&token::CloseDelim(delim)))
             },
         }
     }
@@ -2463,7 +2463,7 @@ impl<'a> State<'a> {
                           colons_before_params: bool)
                           -> io::Result<()>
     {
-        if segment.ident.name != keywords::CrateRoot.name() &&
+        if segment.ident.name != keywords::PathRoot.name() &&
            segment.ident.name != keywords::DollarCrate.name() {
             self.print_ident(segment.ident)?;
             if let Some(ref args) = segment.args {

@@ -1406,7 +1406,7 @@ impl AsInner<fs_imp::DirEntry> for DirEntry {
 /// Removes a file from the filesystem.
 ///
 /// Note that there is no
-/// guarantee that the file is immediately deleted (e.g. depending on
+/// guarantee that the file is immediately deleted (e.g., depending on
 /// platform, other open file descriptors may prevent immediate removal).
 ///
 /// # Platform-specific behavior
@@ -2089,7 +2089,7 @@ mod tests {
     use fs::{self, File, OpenOptions};
     use io::{ErrorKind, SeekFrom};
     use path::Path;
-    use rand::{StdRng, FromEntropy, RngCore};
+    use rand::{rngs::StdRng, FromEntropy, RngCore};
     use str;
     use sys_common::io::test::{TempDir, tmpdir};
     use thread;

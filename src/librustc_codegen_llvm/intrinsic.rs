@@ -732,7 +732,7 @@ impl IntrinsicCallMethods<'tcx> for Builder<'a, 'll, 'tcx> {
                             // We found a tuple that needs squishing! So
                             // run over the tuple and load each field.
                             //
-                            // This assumes the type is "simple", i.e. no
+                            // This assumes the type is "simple", i.e., no
                             // destructors, and the contents are SIMD
                             // etc.
                             assert!(!bx.type_needs_drop(arg.layout.ty));
@@ -997,7 +997,7 @@ fn codegen_msvc_try(
 }
 
 // Definition of the standard "try" function for Rust using the GNU-like model
-// of exceptions (e.g. the normal semantics of LLVM's landingpad and invoke
+// of exceptions (e.g., the normal semantics of LLVM's landingpad and invoke
 // instructions).
 //
 // This codegen is a little surprising because we always call a shim
@@ -1081,7 +1081,7 @@ fn gen_fn<'ll, 'tcx>(
         Abi::Rust
     ));
     let llfn = cx.define_internal_fn(name, rust_fn_sig);
-    attributes::from_fn_attrs(cx, llfn, None);
+    attributes::from_fn_attrs(cx, llfn, None, rust_fn_sig);
     let bx = Builder::new_block(cx, llfn, "entry-block");
     codegen(bx);
     llfn

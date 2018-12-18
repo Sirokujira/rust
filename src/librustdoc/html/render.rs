@@ -202,8 +202,8 @@ impl Impl {
 
 #[derive(Debug)]
 pub struct Error {
-    file: PathBuf,
-    error: io::Error,
+    pub file: PathBuf,
+    pub error: io::Error,
 }
 
 impl error::Error for Error {
@@ -778,10 +778,7 @@ fn write_shared(
     let mut themes: FxHashSet<String> = FxHashSet::default();
 
     for entry in &cx.shared.themes {
-        let mut content = Vec::with_capacity(100000);
-
-        let mut f = try_err!(File::open(&entry), &entry);
-        try_err!(f.read_to_end(&mut content), &entry);
+        let content = try_err!(fs::read(&entry), &entry);
         let theme = try_none!(try_none!(entry.file_stem(), &entry).to_str(), &entry);
         let extension = try_none!(try_none!(entry.extension(), &entry).to_str(), &entry);
         write(cx.dst.join(format!("{}{}.{}", theme, cx.shared.resource_suffix, extension)),
@@ -793,6 +790,8 @@ fn write_shared(
           static_files::BRUSH_SVG)?;
     write(cx.dst.join(&format!("wheel{}.svg", cx.shared.resource_suffix)),
           static_files::WHEEL_SVG)?;
+    write(cx.dst.join(&format!("down-arrow{}.svg", cx.shared.resource_suffix)),
+          static_files::DOWN_ARROW_SVG)?;
     write_minify(cx.dst.join(&format!("light{}.css", cx.shared.resource_suffix)),
                  static_files::themes::LIGHT,
                  options.enable_minification)?;
@@ -879,10 +878,7 @@ themePicker.onblur = handleThemeButtonsBlur;
         if !options.enable_minification {
             try_err!(fs::copy(css, out), css);
         } else {
-            let mut f = try_err!(File::open(css), css);
-            let mut buffer = String::with_capacity(1000);
-
-            try_err!(f.read_to_string(&mut buffer), css);
+            let buffer = try_err!(fs::read_to_string(css), css);
             write_minify(out, &buffer, options.enable_minification)?;
         }
     }
@@ -1066,7 +1062,7 @@ themePicker.onblur = handleThemeButtonsBlur;
                                        &[(minifier::js::Keyword::Null, "N")]),
                  &dst);
     }
-    try_err!(writeln!(&mut w, "initSearch(searchIndex);"), &dst);
+    try_err!(writeln!(&mut w, "initSearch(searchIndex);addSearchOptions(searchIndex);"), &dst);
 
     if options.enable_index_page {
         if let Some(index_page) = options.index_page.clone() {
@@ -2075,7 +2071,7 @@ impl Context {
     fn item<F>(&mut self, item: clean::Item, all: &mut AllTypes, mut f: F) -> Result<(), Error>
         where F: FnMut(&mut Context, clean::Item),
     {
-        // Stripped modules survive the rustdoc passes (i.e. `strip-private`)
+        // Stripped modules survive the rustdoc passes (i.e., `strip-private`)
         // if they contain impls for public types. These modules can also
         // contain items such as publicly re-exported structures.
         //
@@ -2100,8 +2096,7 @@ impl Context {
                 if !buf.is_empty() {
                     try_err!(this.shared.ensure_dir(&this.dst), &this.dst);
                     let joint_dst = this.dst.join("index.html");
-                    let mut dst = try_err!(File::create(&joint_dst), &joint_dst);
-                    try_err!(dst.write_all(&buf), &joint_dst);
+                    try_err!(fs::write(&joint_dst, buf), &joint_dst);
                 }
 
                 let m = match item.inner {
@@ -2135,8 +2130,7 @@ impl Context {
                 let file_name = &item_path(item_type, name);
                 try_err!(self.shared.ensure_dir(&self.dst), &self.dst);
                 let joint_dst = self.dst.join(file_name);
-                let mut dst = try_err!(File::create(&joint_dst), &joint_dst);
-                try_err!(dst.write_all(&buf), &joint_dst);
+                try_err!(fs::write(&joint_dst, buf), &joint_dst);
 
                 if !self.render_redirect_pages {
                     all.append(full_path(self, &item), &item_type);
@@ -2220,13 +2214,13 @@ impl<'a> Item<'a> {
                 return None;
             }
         } else {
-            let (krate, src_root) = match cache.extern_locations.get(&self.item.def_id.krate) {
-                Some(&(ref name, ref src, Local)) => (name, src),
-                Some(&(ref name, ref src, Remote(ref s))) => {
+            let (krate, src_root) = match *cache.extern_locations.get(&self.item.def_id.krate)? {
+                (ref name, ref src, Local) => (name, src),
+                (ref name, ref src, Remote(ref s)) => {
                     root = s.to_string();
                     (name, src)
                 }
-                Some(&(_, _, Unknown)) | None => return None,
+                (_, _, Unknown) => return None,
             };
 
             clean_srcpath(&src_root, file, false, |component| {
@@ -4796,7 +4790,7 @@ impl<'a> fmt::Display for Source<'a> {
             tmp /= 10;
         }
         write!(fmt, "<pre class=\"line-numbers\">")?;
-        for i in 1..lines + 1 {
+        for i in 1..=lines {
             write!(fmt, "<span id=\"{0}\">{0:1$}</span>\n", i, cols)?;
         }
         write!(fmt, "</pre>")?;
