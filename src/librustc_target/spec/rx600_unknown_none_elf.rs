@@ -23,6 +23,7 @@ pub fn target() -> TargetResult {
         target_vendor: "unknown".to_string(),
         arch: "rx600".to_string(),
         linker_flavor: LinkerFlavor::Lld(LldFlavor::Ld),
+        // linker_flavor: LinkerFlavor::Gcc,
 
         options: TargetOptions {
             linker: Some("rust-lld".to_string()),
