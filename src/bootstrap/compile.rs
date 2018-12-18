@@ -29,12 +29,12 @@ use build_helper::{output, mtime, up_to_date};
 use filetime::FileTime;
 use serde_json;
 
-use util::{exe, libdir, is_dylib};
-use {Compiler, Mode, GitRepo};
-use native;
+use crate::util::{exe, libdir, is_dylib};
+use crate::{Compiler, Mode, GitRepo};
+use crate::native;
 
-use cache::{INTERNER, Interned};
-use builder::{Step, RunConfig, ShouldRun, Builder};
+use crate::cache::{INTERNER, Interned};
+use crate::builder::{Step, RunConfig, ShouldRun, Builder};
 
 #[derive(Debug, PartialOrd, Ord, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Std {
@@ -155,7 +155,9 @@ pub fn std_cargo(builder: &Builder,
         cargo
             .args(&["-p", "alloc"])
             .arg("--manifest-path")
-            .arg(builder.src.join("src/liballoc/Cargo.toml"));
+            .arg(builder.src.join("src/liballoc/Cargo.toml"))
+            .arg("--features")
+            .arg("compiler-builtins-mem");
     } else {
         let features = builder.std_features();
 
