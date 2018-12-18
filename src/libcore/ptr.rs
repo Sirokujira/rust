@@ -2544,7 +2544,7 @@ pub fn eq<T: ?Sized>(a: *const T, b: *const T) -> bool {
 /// assert_eq!(actual, expected);
 /// ```
 #[unstable(feature = "ptr_hash", reason = "newly added", issue = "56286")]
-pub fn hash<T, S: hash::Hasher>(hashee: *const T, into: &mut S) {
+pub fn hash<T: ?Sized, S: hash::Hasher>(hashee: *const T, into: &mut S) {
     use hash::Hash;
     hashee.hash(into);
 }
@@ -2848,14 +2848,14 @@ impl<T: ?Sized> fmt::Pointer for Unique<T> {
 #[unstable(feature = "ptr_internals", issue = "0")]
 impl<'a, T: ?Sized> From<&'a mut T> for Unique<T> {
     fn from(reference: &'a mut T) -> Self {
-        Unique { pointer: unsafe { NonZero(reference as _) }, _marker: PhantomData }
+        Unique { pointer: unsafe { NonZero(reference as *mut T) }, _marker: PhantomData }
     }
 }
 
 #[unstable(feature = "ptr_internals", issue = "0")]
 impl<'a, T: ?Sized> From<&'a T> for Unique<T> {
     fn from(reference: &'a T) -> Self {
-        Unique { pointer: unsafe { NonZero(reference as _) }, _marker: PhantomData }
+        Unique { pointer: unsafe { NonZero(reference as *const T) }, _marker: PhantomData }
     }
 }
 
@@ -2928,7 +2928,7 @@ impl<T: ?Sized> NonNull<T> {
     #[stable(feature = "nonnull", since = "1.25.0")]
     #[inline]
     pub const unsafe fn new_unchecked(ptr: *mut T) -> Self {
-        NonNull { pointer: unsafe { NonZero(ptr as _) } }
+        NonNull { pointer: NonZero(ptr as _) }
     }
 
     /// Creates a new `NonNull` if `ptr` is non-null.
@@ -3058,7 +3058,7 @@ impl<T: ?Sized> From<Unique<T>> for NonNull<T> {
 impl<'a, T: ?Sized> From<&'a mut T> for NonNull<T> {
     #[inline]
     fn from(reference: &'a mut T) -> Self {
-        NonNull { pointer: unsafe { NonZero(reference as _) } }
+        NonNull { pointer: unsafe { NonZero(reference as *mut T) } }
     }
 }
 
@@ -3066,6 +3066,6 @@ impl<'a, T: ?Sized> From<&'a mut T> for NonNull<T> {
 impl<'a, T: ?Sized> From<&'a T> for NonNull<T> {
     #[inline]
     fn from(reference: &'a T) -> Self {
-        NonNull { pointer: unsafe { NonZero(reference as _) } }
+        NonNull { pointer: unsafe { NonZero(reference as *const T) } }
     }
 }

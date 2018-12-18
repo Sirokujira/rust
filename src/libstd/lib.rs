@@ -271,6 +271,7 @@
 #![feature(libc)]
 #![feature(link_args)]
 #![feature(linkage)]
+#![cfg_attr(not(stage0), feature(min_const_unsafe_fn))]
 #![feature(needs_panic_runtime)]
 #![feature(never_type)]
 #![feature(nll)]
@@ -317,10 +318,6 @@
 
 #![default_lib_allocator]
 
-#[cfg(stage0)]
-#[global_allocator]
-static ALLOC: alloc::System = alloc::System;
-
 // Explicitly import the prelude. The compiler uses this same unstable attribute
 // to import the prelude implicitly when building crates that depend on std.
 #[prelude_import]
@@ -342,6 +339,7 @@ pub use core::{unreachable, unimplemented, write, writeln, try};
 extern crate alloc as alloc_crate;
 #[doc(masked)]
 extern crate libc;
+extern crate rustc_demangle;
 
 // We always need an unwinder currently for backtraces
 #[doc(masked)]
